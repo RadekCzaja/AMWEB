@@ -8,8 +8,7 @@ from sqlmodel import Relationship
 from sqlmodel import SQLModel
 
 
-class User(SQLModel, table=True):
-    id: Optional[int] = Field(default=None, primary_key=True)
+class UserBase(SQLModel):
     name: str
     lastname: str
     email: str
@@ -18,8 +17,17 @@ class User(SQLModel, table=True):
     pesel: str
 
 
-class Books(SQLModel, table=True):
+class UserCreate(UserBase):
+
+
+    pass
+
+
+class User(UserBase, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
+
+
+class BooksBase(SQLModel):
     author: str
     title: str
     genere: str
@@ -28,9 +36,17 @@ class Books(SQLModel, table=True):
     year: int
 
 
+class BooksCreate(BooksBase):
+    pass
+
+
+class Books(BooksBase, table=True):
+    id: Optional[int] = Field(default=None, primary_key=True)
+
+
 class LendBooks(SQLModel, table=True):
     id: Optional[int] = Field(default=None, primary_key=True)
-    book_id: Optional[int] = Field(default=None, foreign_key="book.id")
+    book_id: Optional[int] = Field(default=None, foreign_key="books.id")
     dateL: datetime
     dateR: datetime
     dateAR: datetime
