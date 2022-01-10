@@ -10,7 +10,7 @@ from sqlmodel import select
 from sqlmodel import Session
 import db
 import models
-from datetime import date, timedelta
+from datetime import date, timedelta, datetime
 
 router = APIRouter()
 
@@ -19,10 +19,11 @@ router = APIRouter()
 def add_book(
         *, session: Session = Depends(db.get_session), book: models.BooksCreate
 ):
-    session.add(book)
+    db_book = models.Books.from_orm(book)
+    session.add(db_book)
     session.commit()
-    session.refresh(book)
-    return book
+    session.refresh(db_book)
+    return db_book
 
 
 @router.get("/books/")
@@ -40,11 +41,15 @@ def boorow_book(
     user = session.get(models.User, user_id)
     if not user:
         return "nie ma uzytkownika"
-    book = session.exec(select(models.Books).where(models.Books.title == title))
+    book = session.exec(select(models.Books).where(models.Books.title == title)).first()
     if not book:
         return "nie ma ksiazki"
-    lendbooks = models.LendBooks(book_id=book.id, user_id=user.id, dateL=date.today(),
-                                 dateR=date.today() + timedelta(14), DateAR=0)
+    lendbooks = models.LendBooks(book_id=book.id, user_id=user.id, dateL=datetime.today(),
+                                 dateR=datetime.today() + timedelta(14), dateAR=datetime.today())
+    session.add(lendbooks)
+    session.commit()
+    session.refresh()
+    return lendbooks
 
 
 @router.post('/users/')
