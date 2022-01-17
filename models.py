@@ -49,7 +49,7 @@ class LendBooks(SQLModel, table=True):
     book_id: Optional[int] = Field(default=None, foreign_key="books.id")
     dateL: datetime
     dateR: datetime
-    dateAR: datetime
+    dateAR: Optional[datetime] = Field(default=None)
     user_id: Optional[int] = Field(default=None, foreign_key="user.id")
 
 
