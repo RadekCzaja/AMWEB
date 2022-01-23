@@ -12,9 +12,10 @@ router = APIRouter()
 
 @router.post("/books/")
 def add_book(
-        *, session: Session = Depends(db.get_session), book: models.BooksCreate
+        *, session: Session = Depends(db.get_session), book: models.BooksCreate,author: str, title: str, genere: str, dec: str, publisher: str, year: int
 ):
-    db_book = models.Books.from_orm(book)
+   # db_book = models.Books.from_orm(book)
+    db_book = models.Books(author=author, title=title, genere=genere, dec=dec, publisher=publisher, year=year)
     session.add(db_book)
     session.commit()
     session.refresh(db_book)
@@ -66,12 +67,14 @@ def return_book(
 
 @router.post('/users/')
 def add_user(
-        *, session: Session = Depends(db.get_session), user: models.UserCreate
+        *, session: Session = Depends(db.get_session), user: models.UserCreate, name: str, lastname: str, email: str,
+        password: str, adres: str, pesel: str
 ):
-    db_user = models.User.from_orm(user)
+    # db_user = models.User.from_orm(user)
+    db_user = models.User(name=name, lastname=lastname, email=email, password=password, adres=adres, pesel=pesel)
     session.add(db_user)
     session.commit()
-    session.refresh(db_user)
+    #session.refresh(db_user)
     return db_user
 
 
